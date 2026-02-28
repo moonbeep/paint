@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
+
 	import Palette from '$lib/components/Palette.svelte';
 	import Editor from '$lib/components/Editor.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import { BANNER } from '$lib/constants';
 
 	// State lifted up
@@ -18,7 +21,7 @@
 	console.log(BANNER + '\nVersion:', __APP_VERSION__, '\nRelease date:', __BUILD_TIME__);
 </script>
 
-<main class="h-screen w-screen overflow-hidden bg-gray-100 font-sans">
+<main class="h-screen w-screen overflow-hidden bg-backdrop font-sans">
 	<div class="z-0">
 		<Editor
 			bind:selectedColor
@@ -33,12 +36,14 @@
 		<div
 			class="pointer-events-none col-span-3 row-start-1 grid place-items-center opacity-50 select-none"
 		>
-			<span
-				class="rounded bg-black/50 px-3 py-1 text-xs text-white backdrop-blur-sm"
-				class:invisible={!showToolTip}
-			>
-				Scroll to Zoom • Right Click to Pan
-			</span>
+			{#if showToolTip}
+				<span
+					transition:slide
+					class="rounded bg-contrast/80 px-3 py-1 text-xs text-content backdrop-blur-sm"
+				>
+					Scroll to Zoom • Right Click to Pan
+				</span>
+			{/if}
 		</div>
 
 		<div class="pointer-events-auto col-start-1 row-start-2 flex items-center">
@@ -46,19 +51,8 @@
 		</div>
 
 		<div class="pointer-events-auto col-start-3 row-start-3 flex items-end gap-2">
-			<button
-				onclick={downloadCanvas}
-				class="rounded-lg bg-gray-500 px-6 py-3 text-sm font-semibold tracking-wider whitespace-nowrap text-white uppercase shadow-lg hover:bg-gray-600 active:scale-95"
-			>
-				Save
-			</button>
-
-			<button
-				onclick={resetCanvas}
-				class="rounded-lg bg-red-500 px-6 py-3 text-sm font-semibold tracking-wider whitespace-nowrap text-white uppercase shadow-lg hover:bg-red-600 active:scale-95"
-			>
-				Reset
-			</button>
+			<Button label="save" onclick={downloadCanvas} color="primary">Save</Button>
+			<Button label="reset" onclick={resetCanvas} color="accent">Reset</Button>
 		</div>
 	</div>
 </main>

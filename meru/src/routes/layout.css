@@ -1,1 +1,20 @@
 @import 'tailwindcss';
+
+@theme {
+	/*Dark theme: Default*/
+	--color-content: var(--color-gray-100);
+	--color-subtext: var(--color-gray-400);
+
+	/* https://coolors.co/171614-3a2618-754043-edece8-37423d */
+	--color-primary-light: #55665e;
+	--color-primary: #37423d;
+	--color-primary-dark: #2e3833;
+	--color-accent-light: #975356;
+	--color-accent: #754043;
+	--color-accent-dark: #603537;
+	--color-contrast: #171614;
+	--color-backdrop: #edece8;
+	--color-backdrop-dark: #cbc8bc;
+}
+
+@custom-variant light (&:where(.light, .light *));
