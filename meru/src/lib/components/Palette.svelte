@@ -2,7 +2,7 @@
 	import { slide } from 'svelte/transition';
 
 	import { PALETTE } from '$lib/utils/colors';
-	import Icon from './Icon.svelte';
+	import Icon from '$lib/components/Icon.svelte';
 
 	let { selectedColor = $bindable() } = $props<{
 		selectedColor: number;

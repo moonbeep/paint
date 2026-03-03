@@ -27,7 +27,7 @@
 	aria-label={label}
 	{onclick}
 	{disabled}
-	class="rounded-md px-6 py-3 text-sm font-semibold tracking-wider whitespace-nowrap text-content uppercase shadow-md active:scale-95 disabled:text-subtext {themes[
+	class="rounded-md px-4 py-2 text-sm font-semibold tracking-wider whitespace-nowrap text-content uppercase shadow-md active:scale-95 disabled:text-subtext {themes[
 		color
 	] ?? themes.primary}"
 >

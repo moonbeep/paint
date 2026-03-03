@@ -1,18 +1,22 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { saveCanvas, loadCanvas } from '$lib/utils/db';
-	import { CANVAS_SIZE } from '$lib/constants';
+	import { CANVAS_SIZE, MIN_BRUSH_SIZE, MAX_BRUSH_SIZE } from '$lib/constants';
 	import { PALETTE, FILL } from '$lib/utils/colors';
 	import { download } from '$lib/utils/export';
 
 	let {
 		selectedColor = $bindable(),
 		triggerReset = $bindable(),
-		triggerDownload = $bindable()
+		triggerDownload = $bindable(),
+		triggerBrushIncrease = $bindable(),
+		triggerBrushDecrease = $bindable()
 	} = $props<{
 		selectedColor: number;
-		triggerReset: () => void;
-		triggerDownload: () => void;
+		triggerReset: () => string;
+		triggerDownload: () => string;
+		triggerBrushIncrease: () => string;
+		triggerBrushDecrease: () => string;
 	}>();
 
 	let canvas: HTMLCanvasElement;
@@ -24,6 +28,7 @@
 	let zoom = $state(5);
 	let panX = CANVAS_SIZE / 2;
 	let panY = CANVAS_SIZE / 2;
+	let brushSize = $state(1);
 
 	// Mouse State
 	let isPanning = false;
@@ -45,11 +50,32 @@
 		pixels.fill(0);
 		saveCanvas(pixels as Uint8Array);
 		requestDraw();
+		return 'Canvas cleared!';
 	};
 
 	// Download Logic
 	triggerDownload = () => {
 		download(pixels);
+		return 'Canvas saved';
+	};
+
+	// Brush Size
+	triggerBrushIncrease = () => {
+		const prevBrushSize = brushSize;
+		brushSize = Math.min(MAX_BRUSH_SIZE, brushSize + 2);
+		if (brushSize === prevBrushSize) {
+			return '';
+		}
+		return 'Brush size increased to ' + brushSize;
+	};
+
+	triggerBrushDecrease = () => {
+		const prevBrushSize = brushSize;
+		brushSize = Math.max(MIN_BRUSH_SIZE, brushSize - 2);
+		if (brushSize === prevBrushSize) {
+			return '';
+		}
+		return 'Brush size decreased to ' + brushSize;
 	};
 
 	// --- Coordinate System ---
@@ -247,15 +273,34 @@
 	// --- Core Paint Logic ---
 	function paint(clientX: number, clientY: number) {
 		const { x, y } = screenToWorld(clientX, clientY);
-		const gridX = Math.floor(x);
-		const gridY = Math.floor(y);
+		const centerGridX = Math.floor(x);
+		const centerGridY = Math.floor(y);
 
-		if (gridX >= 0 && gridX < CANVAS_SIZE && gridY >= 0 && gridY < CANVAS_SIZE) {
-			const idx = gridY * CANVAS_SIZE + gridX;
-			if (pixels[idx] !== selectedColor) {
-				pixels[idx] = selectedColor;
-				requestDraw();
+		// Calculate how far out from the center to paint
+		// e.g., if brushSize is 3, radius is 1 (paints -1, 0, +1)
+		const radius = Math.floor(brushSize / 2);
+		let changed = false;
+
+		for (let dy = -radius; dy <= radius; dy++) {
+			for (let dx = -radius; dx <= radius; dx++) {
+				const gridX = centerGridX + dx;
+				const gridY = centerGridY + dy;
+
+				// 1. Boundary Check: Ensure coordinates are inside the canvas
+				if (gridX >= 0 && gridX < CANVAS_SIZE && gridY >= 0 && gridY < CANVAS_SIZE) {
+					const idx = gridY * CANVAS_SIZE + gridX;
+
+					// 2. Optimization: Only update and trigger a redraw if the color actually changes
+					if (pixels[idx] !== selectedColor) {
+						pixels[idx] = selectedColor;
+						changed = true;
+					}
+				}
 			}
+		}
+
+		if (changed) {
+			requestDraw();
 		}
 	}
 

@@ -19,9 +19,9 @@
 	}>();
 
 	const themes: Record<string, string> = {
-		primary: 'text-primary hover:text-primary-light disabled:text-primary-light',
-		accent: 'text-accent hover:text-accent-light disabled:text-accent-light',
-		contrast: 'text-contrast hover:text-contrast-light disabled:text-contrast-light'
+		primary: 'bg-primary hover:bg-primary-light disabled:bg-primary-light',
+		accent: 'bg-accent hover:bg-accent-light disabled:bg-accent-light',
+		contrast: 'bg-contrast hover:bg-contrast-light disabled:bg-contrast-light'
 	};
 </script>
 
@@ -29,7 +29,7 @@
 	{onclick}
 	aria-label={name}
 	type="button"
-	class="{htmlClass} flex justify-center {themes[color] ?? themes.primary}"
+	class="{htmlClass} flex justify-center {themes[color] ?? themes.primary} text-content"
 	{disabled}
 >
 	<svg
