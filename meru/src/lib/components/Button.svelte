@@ -1,5 +1,4 @@
 <script lang="ts">
-	// TASK: Fix hover
 	import type { Snippet } from 'svelte';
 
 	const {

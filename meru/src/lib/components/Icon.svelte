@@ -1,5 +1,4 @@
 <script lang="ts">
-	// TASK: Fix hover
 	import { DEFAULT_ICON } from '$lib/constants';
 	import { icons } from '$lib/utils/icons';
 	const {
